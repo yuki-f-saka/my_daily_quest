@@ -15,10 +15,17 @@ export function Screen({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function ScreenHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+type ScreenHeaderProps = {
+  title: string;
+  subtitle?: string;
+  /** Tightens the bottom gap when a control sits directly under the title. */
+  dense?: boolean;
+};
+
+export function ScreenHeader({ title, subtitle, dense = false }: ScreenHeaderProps) {
   const theme = useTheme();
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, dense && styles.headerDense]}>
       <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
       {subtitle ? <Text style={[styles.subtitle, { color: theme.muted }]}>{subtitle}</Text> : null}
     </View>
@@ -32,6 +39,9 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: 20,
     paddingBottom: 24,
+  },
+  headerDense: {
+    paddingBottom: 14,
   },
   title: {
     fontSize: 30,

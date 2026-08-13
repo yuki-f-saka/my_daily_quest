@@ -56,9 +56,12 @@ restarts. Deleting Expo Go — or clearing its data — clears the log.
   light haptic tap, a short sound and a small animation. At the bottom, a small
   settings card holds **Appearance** (System / Light / Dark) and **Sound** (on/off);
   both choices are remembered.
-- **History** — everything you logged, newest first, grouped into Today / Yesterday / date.
-  Each day shows its total, a stacked bar of what it was made of, and the entries
-  themselves. Chips at the top narrow it to one category.
+- **History** — everything you logged, newest first, grouped by **Day / Week / Month /
+  Year**. Each period shows its total and a stacked bar of what it was made of: days
+  list their entries, longer periods break down into the unit below (a week into its
+  days, a month into its weeks, a year into its months). Chips narrow it to one
+  category. Periods and sub-periods with no XP are simply not drawn — the app never
+  renders an absence.
 - **Achievements** — only what has already unlocked. Locked ones are never shown,
   because they are not targets.
 
