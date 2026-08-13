@@ -9,6 +9,7 @@ const ENTRIES_KEY = 'my-daily-quest/entries/v1';
 const UNLOCKED_KEY = 'my-daily-quest/unlocked/v1';
 const THEME_KEY = 'my-daily-quest/theme/v1';
 const SOUND_KEY = 'my-daily-quest/sound/v1';
+const GUIDE_KEY = 'my-daily-quest/guide-seen/v1';
 
 export async function loadEntries(): Promise<XPEntry[]> {
   return readArray(ENTRIES_KEY, isXPEntry);
@@ -63,6 +64,24 @@ export async function saveSoundEnabled(enabled: boolean): Promise<void> {
     await AsyncStorage.setItem(SOUND_KEY, enabled ? 'on' : 'off');
   } catch (error) {
     console.warn(`[storage] could not write ${SOUND_KEY}`, error);
+  }
+}
+
+/** True once the guide has been dismissed, so it only opens itself once. */
+export async function loadGuideSeen(): Promise<boolean> {
+  try {
+    return (await AsyncStorage.getItem(GUIDE_KEY)) === 'seen';
+  } catch (error) {
+    console.warn(`[storage] could not read ${GUIDE_KEY}`, error);
+    return true;
+  }
+}
+
+export async function saveGuideSeen(): Promise<void> {
+  try {
+    await AsyncStorage.setItem(GUIDE_KEY, 'seen');
+  } catch (error) {
+    console.warn(`[storage] could not write ${GUIDE_KEY}`, error);
   }
 }
 

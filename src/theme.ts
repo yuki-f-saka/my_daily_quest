@@ -1,3 +1,11 @@
+import { Platform } from 'react-native';
+
+/**
+ * A system monospace face, for the retro message window. Ships with the OS, so
+ * no font file is added.
+ */
+export const MONO_FONT = Platform.select({ ios: 'Menlo', default: 'monospace' });
+
 /** What the user picked. `system` follows the iPhone's appearance setting. */
 export type ThemePreference = 'system' | 'light' | 'dark';
 

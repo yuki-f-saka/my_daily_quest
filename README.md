@@ -56,7 +56,9 @@ restarts. Deleting Expo Go — or clearing its data — clears the log.
   light haptic tap, a short sound and a small animation. A pixel hero idles in the
   top-right corner, breathing and blinking while Home is open. At the bottom, a small
   settings card holds **Appearance** (System / Light / Dark) and **Sound** (on/off);
-  both choices are remembered.
+  both choices are remembered. Below that, *[ how this works ]* opens a small RPG
+  message window with the whole manual in it — three verbs. It also opens itself
+  once, on the very first launch.
 - **History** — everything you logged, newest first, grouped by **Day / Week / Month /
   Year**. Each period shows its total and a stacked bar of what it was made of: days
   list their entries, longer periods break down into the unit below (a week into its
@@ -97,7 +99,8 @@ src/
   theme.ts                   light/dark palettes
   themeStore.tsx             resolves System/Light/Dark into one theme
   soundStore.tsx             preloaded players for the tap and unlock sounds
-  components/                Screen, CategoryCard, HomeSettings, unlock modal
+  components/                Screen, CategoryCard, HomeSettings, GuideWindow,
+                             PixelArt, PixelHero, unlock modal
   screens/                   Home, History, Achievements
 assets/sounds/               generated WAVs (see below)
 scripts/generate-sounds.mjs  synthesises those WAVs
