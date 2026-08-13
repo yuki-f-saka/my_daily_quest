@@ -37,59 +37,198 @@ function longestGapDays(entries: XPEntry[]): number {
   return longest;
 }
 
-export type DaySection = {
-  /** Local calendar day, YYYY-MM-DD. */
+export type PeriodMode = 'day' | 'week' | 'month' | 'year';
+
+export const PERIOD_MODES: PeriodMode[] = ['day', 'week', 'month', 'year'];
+
+/** One sub-period that actually has XP in it. Empty sub-periods are never emitted. */
+export type PeriodPart = {
+  key: string;
+  label: string;
+  totalXP: number;
+};
+
+export type PeriodBucket = {
   key: string;
   title: string;
   totalXP: number;
   byCategory: Record<Category, number>;
-  data: XPEntry[];
+  /** Newest first. Listed individually in day mode. */
+  entries: XPEntry[];
+  /** Chronological. Empty in day mode, where the entries themselves are the detail. */
+  parts: PeriodPart[];
 };
 
-/** Groups entries (newest first) into local calendar days, newest day first. */
-export function groupByDay(entries: XPEntry[], now: Date = new Date()): DaySection[] {
-  const sections: DaySection[] = [];
-  let current: DaySection | undefined;
+/**
+ * Groups entries into calendar periods, newest period first.
+ *
+ * Only periods that contain XP are returned, and the same holds for `parts`:
+ * a day with nothing in it simply does not exist here. That is deliberate —
+ * this app never renders an absence.
+ */
+export function groupByPeriod(
+  entries: XPEntry[],
+  mode: PeriodMode,
+  now: Date = new Date(),
+): PeriodBucket[] {
+  const buckets = new Map<string, PeriodBucket & { startsAt: number }>();
 
   for (const entry of entries) {
-    const key = dayKey(new Date(entry.createdAt));
-    if (!current || current.key !== key) {
-      current = {
+    const date = new Date(entry.createdAt);
+    const start = startOfPeriod(date, mode);
+    const key = periodKey(start, mode);
+
+    let bucket = buckets.get(key);
+    if (!bucket) {
+      bucket = {
         key,
-        title: dayTitle(key, now),
+        title: periodTitle(start, mode, now),
         totalXP: 0,
         byCategory: emptyByCategory(),
-        data: [],
+        entries: [],
+        parts: [],
+        startsAt: start.getTime(),
       };
-      sections.push(current);
+      buckets.set(key, bucket);
     }
-    current.data.push(entry);
-    current.totalXP += entry.xp;
-    current.byCategory[entry.category] += entry.xp;
+
+    bucket.entries.push(entry);
+    bucket.totalXP += entry.xp;
+    bucket.byCategory[entry.category] += entry.xp;
   }
 
-  return sections;
+  const ordered = [...buckets.values()].sort((a, b) => b.startsAt - a.startsAt);
+  for (const bucket of ordered) {
+    bucket.entries.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+    bucket.parts = subPeriodParts(bucket.entries, mode);
+  }
+
+  return ordered.map(({ startsAt: _startsAt, ...bucket }) => bucket);
 }
 
-function dayKey(date: Date): string {
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-  return `${date.getFullYear()}-${month}-${day}`;
+/** Breaks a period into the next unit down: week into days, month into weeks, year into months. */
+function subPeriodParts(entries: XPEntry[], mode: PeriodMode): PeriodPart[] {
+  if (mode === 'day') return [];
+
+  const childMode: PeriodMode = mode === 'week' ? 'day' : mode === 'month' ? 'week' : 'month';
+  const parts = new Map<string, PeriodPart & { startsAt: number }>();
+
+  for (const entry of entries) {
+    const start = startOfPeriod(new Date(entry.createdAt), childMode);
+    const key = periodKey(start, childMode);
+
+    let part = parts.get(key);
+    if (!part) {
+      part = { key, label: partLabel(start, childMode), totalXP: 0, startsAt: start.getTime() };
+      parts.set(key, part);
+    }
+    part.totalXP += entry.xp;
+  }
+
+  return [...parts.values()]
+    .sort((a, b) => a.startsAt - b.startsAt)
+    .map(({ startsAt: _startsAt, ...part }) => part);
 }
 
-function dayTitle(key: string, now: Date): string {
-  if (key === dayKey(now)) return 'Today';
+function startOfDay(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
 
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
-  if (key === dayKey(yesterday)) return 'Yesterday';
+function startOfPeriod(date: Date, mode: PeriodMode): Date {
+  switch (mode) {
+    case 'day':
+      return startOfDay(date);
+    case 'week': {
+      const start = startOfDay(date);
+      const weekday = (start.getDay() + 6) % 7; // Monday = 0
+      start.setDate(start.getDate() - weekday);
+      return start;
+    }
+    case 'month':
+      return new Date(date.getFullYear(), date.getMonth(), 1);
+    case 'year':
+      return new Date(date.getFullYear(), 0, 1);
+  }
+}
 
-  const [year, month, day] = key.split('-').map(Number);
-  return new Date(year, month - 1, day).toLocaleDateString(undefined, {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
+function periodKey(start: Date, mode: PeriodMode): string {
+  const year = start.getFullYear();
+  const month = `${start.getMonth() + 1}`.padStart(2, '0');
+  const day = `${start.getDate()}`.padStart(2, '0');
+
+  switch (mode) {
+    case 'day':
+      return `d:${year}-${month}-${day}`;
+    case 'week':
+      return `w:${year}-${month}-${day}`;
+    case 'month':
+      return `m:${year}-${month}`;
+    case 'year':
+      return `y:${year}`;
+  }
+}
+
+function periodTitle(start: Date, mode: PeriodMode, now: Date): string {
+  const current = startOfPeriod(now, mode);
+  const isCurrent = start.getTime() === current.getTime();
+
+  switch (mode) {
+    case 'day': {
+      if (isCurrent) return 'Today';
+      const yesterday = startOfDay(now);
+      yesterday.setDate(yesterday.getDate() - 1);
+      if (start.getTime() === yesterday.getTime()) return 'Yesterday';
+      return start.toLocaleDateString(undefined, {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+      });
+    }
+    case 'week': {
+      if (isCurrent) return 'This week';
+      const lastWeek = new Date(current);
+      lastWeek.setDate(lastWeek.getDate() - 7);
+      if (start.getTime() === lastWeek.getTime()) return 'Last week';
+      return weekRangeLabel(start);
+    }
+    case 'month': {
+      if (isCurrent) return 'This month';
+      const sameYear = start.getFullYear() === now.getFullYear();
+      return start.toLocaleDateString(undefined, {
+        month: 'long',
+        ...(sameYear ? {} : { year: 'numeric' }),
+      });
+    }
+    case 'year':
+      return isCurrent ? 'This year' : `${start.getFullYear()}`;
+  }
+}
+
+function partLabel(start: Date, mode: PeriodMode): string {
+  switch (mode) {
+    case 'day':
+      return start.toLocaleDateString(undefined, { weekday: 'short' });
+    case 'week':
+      return weekRangeLabel(start);
+    case 'month':
+      return start.toLocaleDateString(undefined, { month: 'short' });
+    case 'year':
+      return `${start.getFullYear()}`;
+  }
+}
+
+/** "Aug 3 – 9", or "Jul 27 – Aug 2" when the week straddles two months. */
+function weekRangeLabel(start: Date): string {
+  const end = new Date(start);
+  end.setDate(end.getDate() + 6);
+
+  const from = start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  const to =
+    start.getMonth() === end.getMonth()
+      ? `${end.getDate()}`
+      : end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+  return `${from} – ${to}`;
 }
 
 export function formatTime(iso: string): string {
