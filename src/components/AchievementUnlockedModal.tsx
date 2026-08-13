@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
 import { Animated, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { useTheme } from '../theme';
+import { useTheme } from '../themeStore';
 import type { Achievement } from '../types';
 
 type Props = {
@@ -39,6 +39,7 @@ export function AchievementUnlockedModal({ achievement, onDismiss }: Props) {
         <Animated.View
           style={[
             styles.card,
+            theme.shadow,
             {
               backgroundColor: theme.card,
               borderColor: theme.border,

@@ -4,7 +4,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { findAchievement } from '../achievements';
 import { Screen, SCREEN_PADDING, ScreenHeader } from '../components/Screen';
 import { useXPStore } from '../store';
-import { useTheme } from '../theme';
+import { useTheme } from '../themeStore';
 import { formatDate } from '../xp';
 
 export function AchievementsScreen() {
@@ -44,7 +44,12 @@ export function AchievementsScreen() {
           ) : null
         }
         renderItem={({ item }) => (
-          <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View
+            style={[
+              styles.card,
+              { backgroundColor: theme.card, borderColor: theme.border },
+              theme.shadow,
+            ]}>
             <Text style={[styles.title, { color: theme.text }]}>{item.achievement?.title}</Text>
             <Text style={[styles.description, { color: theme.muted }]}>
               {item.achievement?.description}

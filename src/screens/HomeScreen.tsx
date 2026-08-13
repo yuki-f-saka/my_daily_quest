@@ -1,11 +1,12 @@
 import React from 'react';
 import { Animated, Easing, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { AppearanceControl } from '../components/AppearanceControl';
 import { CATEGORIES } from '../categories';
 import { CategoryCard } from '../components/CategoryCard';
 import { Screen, SCREEN_PADDING } from '../components/Screen';
 import { useXPStore } from '../store';
-import { useTheme } from '../theme';
+import { useTheme } from '../themeStore';
 
 export function HomeScreen() {
   const theme = useTheme();
@@ -36,6 +37,8 @@ export function HomeScreen() {
             onAddXP={(xp) => addXP(category.id, xp)}
           />
         ))}
+
+        <AppearanceControl />
       </ScrollView>
     </Screen>
   );

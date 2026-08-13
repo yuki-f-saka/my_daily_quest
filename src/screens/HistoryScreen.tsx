@@ -4,7 +4,7 @@ import { SectionList, StyleSheet, Text, View } from 'react-native';
 import { categoryAccent, categoryLabel } from '../categories';
 import { Screen, SCREEN_PADDING, ScreenHeader } from '../components/Screen';
 import { useXPStore } from '../store';
-import { useTheme } from '../theme';
+import { useTheme } from '../themeStore';
 import { formatTime, groupByDay } from '../xp';
 
 export function HistoryScreen() {

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { CategoryMeta } from '../categories';
-import { useTheme } from '../theme';
+import { useTheme } from '../themeStore';
 
 const XP_OPTIONS = [1, 2];
 
@@ -39,7 +39,12 @@ export function CategoryCard({ category, totalXP, onAddXP }: Props) {
   const deltaTranslateY = pop.interpolate({ inputRange: [0, 1], outputRange: [0, -26] });
 
   return (
-    <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: theme.card, borderColor: theme.border },
+        theme.shadow,
+      ]}>
       <View style={styles.labelRow}>
         <View style={[styles.dot, { backgroundColor: accent }]} />
         <Text style={[styles.label, { color: theme.muted }]}>{category.label.toUpperCase()}</Text>

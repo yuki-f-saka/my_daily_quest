@@ -53,7 +53,8 @@ restarts. Deleting Expo Go — or clearing its data — clears the log.
 
 - **Home** — four category cards (Applications, Coding, Behavioral, System Design),
   each showing accumulated XP and two buttons. Tapping one bumps the number with a
-  light haptic tap and a small animation.
+  light haptic tap and a small animation. At the bottom, an **Appearance** control
+  switches between System / Light / Dark; the choice is remembered.
 - **History** — everything you logged, newest first, grouped into Today / Yesterday / date.
 - **Achievements** — only what has already unlocked. Locked ones are never shown,
   because they are not targets.
