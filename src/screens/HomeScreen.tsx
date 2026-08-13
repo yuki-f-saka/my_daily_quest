@@ -4,6 +4,7 @@ import { Animated, Easing, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { CATEGORIES } from '../categories';
 import { CategoryCard } from '../components/CategoryCard';
 import { HomeSettings } from '../components/HomeSettings';
+import { PixelHero } from '../components/PixelHero';
 import { Screen, SCREEN_PADDING } from '../components/Screen';
 import { useXPStore } from '../store';
 import { useTheme } from '../themeStore';
@@ -17,16 +18,20 @@ export function HomeScreen() {
     <Screen>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Text style={[styles.kicker, { color: theme.muted }]}>MY DAILY QUEST</Text>
-          <Animated.View style={[styles.totalRow, { transform: [{ scale: totalScale }] }]}>
-            <Text style={[styles.total, { color: theme.text }]}>
-              {stats.totalXP}
-              <Text style={[styles.totalUnit, { color: theme.muted }]}> XP</Text>
+          <View style={styles.headerText}>
+            <Text style={[styles.kicker, { color: theme.muted }]}>MY DAILY QUEST</Text>
+            <Animated.View style={[styles.totalRow, { transform: [{ scale: totalScale }] }]}>
+              <Text style={[styles.total, { color: theme.text }]}>
+                {stats.totalXP}
+                <Text style={[styles.totalUnit, { color: theme.muted }]}> XP</Text>
+              </Text>
+            </Animated.View>
+            <Text style={[styles.tagline, { color: theme.muted }]}>
+              You never fail. You only gain XP.
             </Text>
-          </Animated.View>
-          <Text style={[styles.tagline, { color: theme.muted }]}>
-            You never fail. You only gain XP.
-          </Text>
+          </View>
+
+          <PixelHero />
         </View>
 
         {CATEGORIES.map((category) => (
@@ -71,8 +76,14 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingTop: 24,
     paddingBottom: 28,
+  },
+  headerText: {
+    flex: 1,
+    marginRight: 12,
   },
   kicker: {
     fontSize: 11,
