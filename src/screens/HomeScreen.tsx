@@ -3,9 +3,11 @@ import { Animated, Easing, ScrollView, StyleSheet, Text, View } from 'react-nati
 
 import { CATEGORIES } from '../categories';
 import { CategoryCard } from '../components/CategoryCard';
+import { GuideLink, GuideWindow } from '../components/GuideWindow';
 import { HomeSettings } from '../components/HomeSettings';
 import { PixelHero } from '../components/PixelHero';
 import { Screen, SCREEN_PADDING } from '../components/Screen';
+import { loadGuideSeen, saveGuideSeen } from '../storage';
 import { useXPStore } from '../store';
 import { useTheme } from '../themeStore';
 
@@ -13,6 +15,26 @@ export function HomeScreen() {
   const theme = useTheme();
   const { stats, addXP } = useXPStore();
   const totalScale = useTotalPulse(stats.totalXP);
+  const [guideOpen, setGuideOpen] = React.useState(false);
+
+  // Opens itself once, on the first launch, and never again unasked.
+  React.useEffect(() => {
+    let cancelled = false;
+
+    void (async () => {
+      const seen = await loadGuideSeen();
+      if (!cancelled && !seen) setGuideOpen(true);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const closeGuide = React.useCallback(() => {
+    setGuideOpen(false);
+    void saveGuideSeen();
+  }, []);
 
   return (
     <Screen>
@@ -44,7 +66,10 @@ export function HomeScreen() {
         ))}
 
         <HomeSettings />
+        <GuideLink onPress={() => setGuideOpen(true)} />
       </ScrollView>
+
+      <GuideWindow visible={guideOpen} onClose={closeGuide} />
     </Screen>
   );
 }
