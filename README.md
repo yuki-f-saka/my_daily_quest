@@ -62,8 +62,8 @@ restarts. Deleting Expo Go — or clearing its data — clears the log.
   days, a month into its weeks, a year into its months). Chips narrow it to one
   category. Periods and sub-periods with no XP are simply not drawn — the app never
   renders an absence.
-- **Achievements** — only what has already unlocked. Locked ones are never shown,
-  because they are not targets.
+- **Achievements** — only what has already unlocked, each with its own pixel badge.
+  Locked ones are never shown, not even as silhouettes, because they are not targets.
 
 ## Achievements
 
@@ -89,6 +89,7 @@ src/
   categories.ts              the four categories and their accents
   xp.ts                      XP totals + day grouping, derived from the log
   achievements.ts            achievement definitions and unlock checks
+  badges.ts                  one 11x11 pixel sprite per achievement
   storage.ts                 AsyncStorage read/write with validation
   store.tsx                  React context: load, add XP, track unlocks
   theme.ts                   light/dark palettes
