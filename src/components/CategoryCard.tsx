@@ -1,10 +1,12 @@
 import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
-import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 
 import type { CategoryMeta } from '../categories';
 import { useSound } from '../soundStore';
 import { useTheme } from '../themeStore';
+import { Panel } from './Panel';
+import { PixelButton } from './PixelButton';
 
 const XP_OPTIONS = [1, 2];
 
@@ -42,14 +44,9 @@ export function CategoryCard({ category, totalXP, onAddXP }: Props) {
   const deltaTranslateY = pop.interpolate({ inputRange: [0, 1], outputRange: [0, -26] });
 
   return (
-    <View
-      style={[
-        styles.card,
-        { backgroundColor: theme.card, borderColor: theme.border },
-        theme.shadow,
-      ]}>
+    <Panel style={styles.card} contentStyle={styles.content}>
       <View style={styles.labelRow}>
-        <View style={[styles.dot, { backgroundColor: accent }]} />
+        <View style={[styles.marker, { backgroundColor: accent }]} />
         <Text style={[styles.label, { color: theme.muted }]}>{category.label.toUpperCase()}</Text>
       </View>
 
@@ -72,57 +69,48 @@ export function CategoryCard({ category, totalXP, onAddXP }: Props) {
 
       <View style={styles.buttonRow}>
         {XP_OPTIONS.map((xp) => (
-          <Pressable
+          <PixelButton
             key={xp}
-            accessibilityRole="button"
+            label={`+${xp} XP`}
+            tint={accent}
+            style={styles.button}
             accessibilityLabel={`Add ${xp} XP to ${category.label}`}
             onPress={() => handleAdd(xp)}
-            style={({ pressed }) => [
-              styles.button,
-              {
-                backgroundColor: theme.fill,
-                borderColor: theme.border,
-                opacity: pressed ? 0.6 : 1,
-                transform: [{ scale: pressed ? 0.98 : 1 }],
-              },
-            ]}>
-            <Text style={[styles.buttonText, { color: accent }]}>+{xp} XP</Text>
-          </Pressable>
+          />
         ))}
       </View>
-    </View>
+    </Panel>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 18,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 18,
-    paddingTop: 18,
-    paddingBottom: 16,
     marginBottom: 14,
+  },
+  content: {
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 14,
   },
   labelRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  dot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
+  marker: {
+    width: 8,
+    height: 8,
     marginRight: 8,
   },
   label: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     letterSpacing: 1.1,
   },
   amountRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    marginTop: 10,
-    marginBottom: 18,
+    marginTop: 8,
+    marginBottom: 16,
   },
   amount: {
     fontSize: 34,
@@ -142,18 +130,9 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 8,
   },
   button: {
     flex: 1,
-    height: 48,
-    borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
   },
 });

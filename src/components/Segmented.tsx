@@ -13,7 +13,10 @@ type Props<T extends string> = {
   accessibilityLabelPrefix?: string;
 };
 
-/** The one segmented control in the app: used for Appearance and for the History period. */
+/**
+ * A menu strip. The chosen entry is inverted, the way a highlighted row looks in
+ * an RPG menu, rather than being lifted like an iOS segment.
+ */
 export function Segmented<T extends string>({
   options,
   value,
@@ -30,7 +33,7 @@ export function Segmented<T extends string>({
   };
 
   return (
-    <View style={[styles.track, { backgroundColor: theme.fill, borderColor: theme.border }]}>
+    <View style={[styles.track, { backgroundColor: theme.fill, borderColor: theme.frame }]}>
       {options.map((option) => {
         const selected = option.value === value;
         return (
@@ -47,15 +50,15 @@ export function Segmented<T extends string>({
             style={({ pressed }) => [
               styles.segment,
               stretch && styles.stretched,
-              selected && { backgroundColor: theme.card, borderColor: theme.border },
+              selected && { backgroundColor: theme.frame },
               { opacity: pressed ? 0.6 : 1 },
             ]}>
             <Text
               style={[
                 styles.segmentText,
                 {
-                  color: selected ? theme.text : theme.muted,
-                  fontWeight: selected ? '600' : '500',
+                  color: selected ? theme.card : theme.muted,
+                  fontWeight: selected ? '700' : '500',
                 },
               ]}>
               {option.label}
@@ -70,16 +73,15 @@ export function Segmented<T extends string>({
 const styles = StyleSheet.create({
   track: {
     flexDirection: 'row',
-    padding: 3,
-    borderRadius: 11,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: 2,
+    borderRadius: 0,
+    padding: 2,
+    gap: 2,
   },
   segment: {
     paddingHorizontal: 12,
     paddingVertical: 7,
-    borderRadius: 8,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'transparent',
+    borderRadius: 0,
     alignItems: 'center',
   },
   stretched: {

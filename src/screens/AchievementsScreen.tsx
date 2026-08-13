@@ -3,6 +3,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { findAchievement } from '../achievements';
 import { BADGE_ART, badgePalette } from '../badges';
+import { Panel } from '../components/Panel';
 import { PixelArt } from '../components/PixelArt';
 import { Screen, SCREEN_PADDING, ScreenHeader } from '../components/Screen';
 import { useXPStore } from '../store';
@@ -48,18 +49,16 @@ export function AchievementsScreen() {
           ) : null
         }
         renderItem={({ item }) => (
-          <View
-            style={[
-              styles.card,
-              { backgroundColor: theme.card, borderColor: theme.border },
-              theme.shadow,
-            ]}>
-            <PixelArt
-              rows={BADGE_ART[item.id].rows}
-              palette={badgePalette(item.id, theme.dark)}
-              pixel={BADGE_PIXEL}
-              accessibilityLabel={`${item.achievement.title} badge`}
-            />
+          <Panel style={styles.card} contentStyle={styles.cardContent}>
+            {/* The badge sits in its own box, like an item in a slot. */}
+            <View style={[styles.badgeBox, { borderColor: theme.frame, backgroundColor: theme.fill }]}>
+              <PixelArt
+                rows={BADGE_ART[item.id].rows}
+                palette={badgePalette(item.id, theme.dark)}
+                pixel={BADGE_PIXEL}
+                accessibilityLabel={`${item.achievement.title} badge`}
+              />
+            </View>
 
             <View style={styles.body}>
               <Text style={[styles.title, { color: theme.text }]}>{item.achievement.title}</Text>
@@ -70,7 +69,7 @@ export function AchievementsScreen() {
                 Unlocked {formatDate(item.unlockedAt)}
               </Text>
             </View>
-          </View>
+          </Panel>
         )}
       />
     </Screen>
@@ -92,16 +91,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   card: {
+    marginBottom: 12,
+  },
+  cardContent: {
     flexDirection: 'row',
-    borderRadius: 16,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 18,
-    paddingVertical: 16,
-    marginBottom: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+  },
+  badgeBox: {
+    borderWidth: 2,
+    borderRadius: 0,
+    padding: 6,
   },
   body: {
     flex: 1,
-    marginLeft: 16,
+    marginLeft: 14,
   },
   title: {
     fontSize: 17,

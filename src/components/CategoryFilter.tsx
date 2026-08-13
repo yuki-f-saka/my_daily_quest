@@ -40,7 +40,7 @@ export function CategoryFilter({ value, onChange }: Props) {
       contentContainerStyle={styles.row}>
       {chips.map((chip) => {
         const selected = chip.key === value;
-        const tint = chip.accent ?? theme.text;
+        const tint = chip.accent ?? theme.frame;
         return (
           <Pressable
             key={chip.key}
@@ -50,17 +50,17 @@ export function CategoryFilter({ value, onChange }: Props) {
             style={({ pressed }) => [
               styles.chip,
               selected
-                ? { backgroundColor: theme.card, borderColor: tint }
-                : { backgroundColor: theme.fill, borderColor: 'transparent' },
+                ? { backgroundColor: tint, borderColor: tint }
+                : { backgroundColor: theme.card, borderColor: theme.border },
               { opacity: pressed ? 0.6 : 1 },
             ]}>
-            {chip.accent ? (
-              <View style={[styles.dot, { backgroundColor: chip.accent }]} />
+            {chip.accent && !selected ? (
+              <View style={[styles.marker, { backgroundColor: chip.accent }]} />
             ) : null}
             <Text
               style={[
                 styles.chipText,
-                { color: selected ? tint : theme.muted, fontWeight: selected ? '700' : '500' },
+                { color: selected ? theme.card : theme.muted, fontWeight: selected ? '700' : '500' },
               ]}>
               {chip.label}
             </Text>
@@ -80,15 +80,14 @@ const styles = StyleSheet.create({
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 13,
-    paddingVertical: 8,
-    borderRadius: 999,
-    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 0,
+    borderWidth: 2,
   },
-  dot: {
+  marker: {
     width: 6,
     height: 6,
-    borderRadius: 3,
     marginRight: 6,
   },
   chipText: {

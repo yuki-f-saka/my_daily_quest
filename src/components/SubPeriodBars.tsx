@@ -23,7 +23,8 @@ export function SubPeriodBars({ parts }: { parts: PeriodPart[] }) {
           <Text style={[styles.label, { color: theme.muted }]} numberOfLines={1}>
             {part.label}
           </Text>
-          <View style={[styles.track, { backgroundColor: theme.fill }]}>
+          <View
+            style={[styles.track, { backgroundColor: theme.fill, borderColor: theme.border }]}>
             <View
               style={[
                 styles.bar,
@@ -54,14 +55,15 @@ const styles = StyleSheet.create({
   },
   track: {
     flex: 1,
-    height: 8,
-    borderRadius: 4,
+    height: 12,
+    borderWidth: 1,
+    borderRadius: 0,
     overflow: 'hidden',
   },
   bar: {
-    height: 8,
-    minWidth: 6,
-    borderRadius: 4,
+    height: '100%',
+    minWidth: 4,
+    borderRadius: 0,
   },
   value: {
     width: 40,

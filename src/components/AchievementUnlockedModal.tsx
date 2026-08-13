@@ -1,12 +1,14 @@
 import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
-import { Animated, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Modal, StyleSheet, Text, View } from 'react-native';
 
 import { BADGE_ART, badgePalette } from '../badges';
 import { useSound } from '../soundStore';
 import { useTheme } from '../themeStore';
 import type { Achievement } from '../types';
+import { Panel } from './Panel';
 import { PixelArt } from './PixelArt';
+import { PixelButton } from './PixelButton';
 
 const BADGE_PIXEL = 7;
 
@@ -15,6 +17,7 @@ type Props = {
   onDismiss: () => void;
 };
 
+/** The same message window as the guide, handing over a badge. */
 export function AchievementUnlockedModal({ achievement, onDismiss }: Props) {
   const theme = useTheme();
   const { playUnlock } = useSound();
@@ -36,7 +39,7 @@ export function AchievementUnlockedModal({ achievement, onDismiss }: Props) {
         tension: 80,
         useNativeDriver: true,
       }),
-      // The badge lands a beat after the card, so it reads as being handed over.
+      // The badge lands a beat after the window, so it reads as being handed over.
       Animated.spring(badgePop, {
         toValue: 1,
         delay: 110,
@@ -58,41 +61,32 @@ export function AchievementUnlockedModal({ achievement, onDismiss }: Props) {
       onRequestClose={onDismiss}>
       <View style={[styles.backdrop, { backgroundColor: theme.overlay }]}>
         <Animated.View
-          style={[
-            styles.card,
-            theme.shadow,
-            {
-              backgroundColor: theme.card,
-              borderColor: theme.border,
-              opacity: entrance,
-              transform: [{ scale }],
-            },
-          ]}>
-          {achievement ? (
-            <Animated.View
-              style={[styles.badge, { opacity: badgePop, transform: [{ scale: badgeScale }] }]}>
-              <PixelArt
-                rows={BADGE_ART[achievement.id].rows}
-                palette={badgePalette(achievement.id, theme.dark)}
-                pixel={BADGE_PIXEL}
-                accessibilityLabel={`${achievement.title} badge`}
-              />
-            </Animated.View>
-          ) : null}
+          style={[styles.wrapper, { opacity: entrance, transform: [{ scale }] }]}>
+          <Panel double contentStyle={styles.content}>
+            {achievement ? (
+              <Animated.View
+                style={[
+                  styles.badgeBox,
+                  { borderColor: theme.frame, backgroundColor: theme.fill },
+                  { opacity: badgePop, transform: [{ scale: badgeScale }] },
+                ]}>
+                <PixelArt
+                  rows={BADGE_ART[achievement.id].rows}
+                  palette={badgePalette(achievement.id, theme.dark)}
+                  pixel={BADGE_PIXEL}
+                  accessibilityLabel={`${achievement.title} badge`}
+                />
+              </Animated.View>
+            ) : null}
 
-          <Text style={[styles.kicker, { color: theme.accent }]}>ACHIEVEMENT UNLOCKED</Text>
-          <Text style={[styles.title, { color: theme.text }]}>{achievement?.title}</Text>
-          <Text style={[styles.description, { color: theme.muted }]}>{achievement?.description}</Text>
+            <Text style={[styles.kicker, { color: theme.accent }]}>ACHIEVEMENT UNLOCKED</Text>
+            <Text style={[styles.title, { color: theme.text }]}>{achievement?.title}</Text>
+            <Text style={[styles.description, { color: theme.muted }]}>
+              {achievement?.description}
+            </Text>
 
-          <Pressable
-            accessibilityRole="button"
-            onPress={onDismiss}
-            style={({ pressed }) => [
-              styles.button,
-              { backgroundColor: theme.fill, borderColor: theme.border, opacity: pressed ? 0.6 : 1 },
-            ]}>
-            <Text style={[styles.buttonText, { color: theme.text }]}>Nice</Text>
-          </Pressable>
+            <PixelButton label="Nice" onPress={onDismiss} style={styles.button} />
+          </Panel>
         </Animated.View>
       </View>
     </Modal>
@@ -106,17 +100,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 32,
   },
-  card: {
+  wrapper: {
     width: '100%',
-    maxWidth: 340,
-    borderRadius: 20,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 24,
-    paddingTop: 26,
-    paddingBottom: 20,
+    maxWidth: 320,
+  },
+  content: {
+    paddingHorizontal: 22,
+    paddingTop: 22,
+    paddingBottom: 18,
     alignItems: 'center',
   },
-  badge: {
+  badgeBox: {
+    borderWidth: 2,
+    borderRadius: 0,
+    padding: 10,
     marginBottom: 18,
   },
   kicker: {
@@ -125,7 +122,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1.4,
   },
   title: {
-    marginTop: 12,
+    marginTop: 10,
     fontSize: 24,
     fontWeight: '700',
     letterSpacing: -0.3,
@@ -138,16 +135,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    marginTop: 22,
+    marginTop: 20,
     alignSelf: 'stretch',
-    height: 48,
-    borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
   },
 });

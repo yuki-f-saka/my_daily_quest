@@ -22,13 +22,10 @@ export type Theme = {
   fill: string;
   accent: string;
   overlay: string;
-  /** Cards float in light mode and sit flat in dark mode, like native iOS. */
-  shadow: {
-    shadowColor: string;
-    shadowOpacity: number;
-    shadowRadius: number;
-    shadowOffset: { width: number; height: number };
-  };
+  /** Border colour of every window and panel. */
+  frame: string;
+  /** Hard, unblurred drop shadow behind a panel. No soft shadows in here. */
+  frameShadow: string;
 };
 
 export const lightTheme: Theme = {
@@ -41,12 +38,8 @@ export const lightTheme: Theme = {
   fill: '#EFEFF4',
   accent: '#3F6FE0',
   overlay: 'rgba(0,0,0,0.28)',
-  shadow: {
-    shadowColor: '#0B1020',
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 2 },
-  },
+  frame: '#2B2D33',
+  frameShadow: '#CFCFD6',
 };
 
 export const darkTheme: Theme = {
@@ -59,12 +52,8 @@ export const darkTheme: Theme = {
   fill: '#212329',
   accent: '#7FA0F0',
   overlay: 'rgba(0,0,0,0.6)',
-  shadow: {
-    shadowColor: '#000000',
-    shadowOpacity: 0,
-    shadowRadius: 0,
-    shadowOffset: { width: 0, height: 0 },
-  },
+  frame: '#E4E6EB',
+  frameShadow: '#31343C',
 };
 
 export function isThemePreference(value: unknown): value is ThemePreference {
