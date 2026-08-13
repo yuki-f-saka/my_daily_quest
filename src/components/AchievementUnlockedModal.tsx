@@ -2,9 +2,13 @@ import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
 import { Animated, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { BADGE_ART, badgePalette } from '../badges';
 import { useSound } from '../soundStore';
 import { useTheme } from '../themeStore';
 import type { Achievement } from '../types';
+import { PixelArt } from './PixelArt';
+
+const BADGE_PIXEL = 7;
 
 type Props = {
   achievement: Achievement | null;
@@ -15,22 +19,36 @@ export function AchievementUnlockedModal({ achievement, onDismiss }: Props) {
   const theme = useTheme();
   const { playUnlock } = useSound();
   const [entrance] = useState(() => new Animated.Value(0));
+  const [badgePop] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     if (!achievement) return;
 
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     playUnlock();
+
     entrance.setValue(0);
-    Animated.spring(entrance, {
-      toValue: 1,
-      friction: 9,
-      tension: 80,
-      useNativeDriver: true,
-    }).start();
-  }, [achievement, entrance, playUnlock]);
+    badgePop.setValue(0);
+    Animated.parallel([
+      Animated.spring(entrance, {
+        toValue: 1,
+        friction: 9,
+        tension: 80,
+        useNativeDriver: true,
+      }),
+      // The badge lands a beat after the card, so it reads as being handed over.
+      Animated.spring(badgePop, {
+        toValue: 1,
+        delay: 110,
+        friction: 6,
+        tension: 90,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [achievement, entrance, badgePop, playUnlock]);
 
   const scale = entrance.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1] });
+  const badgeScale = badgePop.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] });
 
   return (
     <Modal
@@ -50,6 +68,18 @@ export function AchievementUnlockedModal({ achievement, onDismiss }: Props) {
               transform: [{ scale }],
             },
           ]}>
+          {achievement ? (
+            <Animated.View
+              style={[styles.badge, { opacity: badgePop, transform: [{ scale: badgeScale }] }]}>
+              <PixelArt
+                rows={BADGE_ART[achievement.id].rows}
+                palette={badgePalette(achievement.id, theme.dark)}
+                pixel={BADGE_PIXEL}
+                accessibilityLabel={`${achievement.title} badge`}
+              />
+            </Animated.View>
+          ) : null}
+
           <Text style={[styles.kicker, { color: theme.accent }]}>ACHIEVEMENT UNLOCKED</Text>
           <Text style={[styles.title, { color: theme.text }]}>{achievement?.title}</Text>
           <Text style={[styles.description, { color: theme.muted }]}>{achievement?.description}</Text>
@@ -85,6 +115,9 @@ const styles = StyleSheet.create({
     paddingTop: 26,
     paddingBottom: 20,
     alignItems: 'center',
+  },
+  badge: {
+    marginBottom: 18,
   },
   kicker: {
     fontSize: 11,

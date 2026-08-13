@@ -2,10 +2,14 @@ import React, { useMemo } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { findAchievement } from '../achievements';
+import { BADGE_ART, badgePalette } from '../badges';
+import { PixelArt } from '../components/PixelArt';
 import { Screen, SCREEN_PADDING, ScreenHeader } from '../components/Screen';
 import { useXPStore } from '../store';
 import { useTheme } from '../themeStore';
 import { formatDate } from '../xp';
+
+const BADGE_PIXEL = 4;
 
 export function AchievementsScreen() {
   const theme = useTheme();
@@ -14,10 +18,10 @@ export function AchievementsScreen() {
   /** Newest unlock first. Locked achievements stay hidden — they are not targets. */
   const items = useMemo(
     () =>
-      [...unlocked]
-        .reverse()
-        .map((u) => ({ ...u, achievement: findAchievement(u.id) }))
-        .filter((item) => item.achievement !== undefined),
+      [...unlocked].reverse().flatMap((entry) => {
+        const achievement = findAchievement(entry.id);
+        return achievement ? [{ ...entry, achievement }] : [];
+      }),
     [unlocked],
   );
 
@@ -50,13 +54,22 @@ export function AchievementsScreen() {
               { backgroundColor: theme.card, borderColor: theme.border },
               theme.shadow,
             ]}>
-            <Text style={[styles.title, { color: theme.text }]}>{item.achievement?.title}</Text>
-            <Text style={[styles.description, { color: theme.muted }]}>
-              {item.achievement?.description}
-            </Text>
-            <Text style={[styles.date, { color: theme.muted }]}>
-              Unlocked {formatDate(item.unlockedAt)}
-            </Text>
+            <PixelArt
+              rows={BADGE_ART[item.id].rows}
+              palette={badgePalette(item.id, theme.dark)}
+              pixel={BADGE_PIXEL}
+              accessibilityLabel={`${item.achievement.title} badge`}
+            />
+
+            <View style={styles.body}>
+              <Text style={[styles.title, { color: theme.text }]}>{item.achievement.title}</Text>
+              <Text style={[styles.description, { color: theme.muted }]}>
+                {item.achievement.description}
+              </Text>
+              <Text style={[styles.date, { color: theme.muted }]}>
+                Unlocked {formatDate(item.unlockedAt)}
+              </Text>
+            </View>
           </View>
         )}
       />
@@ -79,11 +92,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   card: {
+    flexDirection: 'row',
     borderRadius: 16,
     borderWidth: StyleSheet.hairlineWidth,
     paddingHorizontal: 18,
     paddingVertical: 16,
     marginBottom: 10,
+  },
+  body: {
+    flex: 1,
+    marginLeft: 16,
   },
   title: {
     fontSize: 17,
