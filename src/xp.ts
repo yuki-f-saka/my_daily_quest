@@ -2,24 +2,25 @@ import type { Category, XPEntry, XPStats } from './types';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+export function emptyByCategory(): Record<Category, number> {
+  return { applications: 0, coding: 0, behavioral: 0, 'system-design': 0 };
+}
+
+export function sumByCategory(entries: XPEntry[]): Record<Category, number> {
+  const byCategory = emptyByCategory();
+  for (const entry of entries) byCategory[entry.category] += entry.xp;
+  return byCategory;
+}
+
+export function sumXP(entries: XPEntry[]): number {
+  return entries.reduce((total, entry) => total + entry.xp, 0);
+}
+
 /** Cumulative XP is always derived from the entry log, never stored separately. */
 export function computeStats(entries: XPEntry[]): XPStats {
-  const byCategory: Record<Category, number> = {
-    applications: 0,
-    coding: 0,
-    behavioral: 0,
-    'system-design': 0,
-  };
-
-  let totalXP = 0;
-  for (const entry of entries) {
-    byCategory[entry.category] += entry.xp;
-    totalXP += entry.xp;
-  }
-
   return {
-    totalXP,
-    byCategory,
+    totalXP: sumXP(entries),
+    byCategory: sumByCategory(entries),
     entryCount: entries.length,
     longestGapDays: longestGapDays(entries),
   };
@@ -41,6 +42,7 @@ export type DaySection = {
   key: string;
   title: string;
   totalXP: number;
+  byCategory: Record<Category, number>;
   data: XPEntry[];
 };
 
@@ -52,11 +54,18 @@ export function groupByDay(entries: XPEntry[], now: Date = new Date()): DaySecti
   for (const entry of entries) {
     const key = dayKey(new Date(entry.createdAt));
     if (!current || current.key !== key) {
-      current = { key, title: dayTitle(key, now), totalXP: 0, data: [] };
+      current = {
+        key,
+        title: dayTitle(key, now),
+        totalXP: 0,
+        byCategory: emptyByCategory(),
+        data: [],
+      };
       sections.push(current);
     }
     current.data.push(entry);
     current.totalXP += entry.xp;
+    current.byCategory[entry.category] += entry.xp;
   }
 
   return sections;

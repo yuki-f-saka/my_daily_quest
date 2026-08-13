@@ -57,6 +57,8 @@ restarts. Deleting Expo Go — or clearing its data — clears the log.
   settings card holds **Appearance** (System / Light / Dark) and **Sound** (on/off);
   both choices are remembered.
 - **History** — everything you logged, newest first, grouped into Today / Yesterday / date.
+  Each day shows its total, a stacked bar of what it was made of, and the entries
+  themselves. Chips at the top narrow it to one category.
 - **Achievements** — only what has already unlocked. Locked ones are never shown,
   because they are not targets.
 
