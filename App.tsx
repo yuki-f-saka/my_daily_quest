@@ -11,7 +11,7 @@ import { AchievementsScreen } from './src/screens/AchievementsScreen';
 import { HistoryScreen } from './src/screens/HistoryScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { useXPStore, XPProvider } from './src/store';
-import { useTheme } from './src/theme';
+import { ThemeProvider, useTheme } from './src/themeStore';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,9 +24,11 @@ const TAB_ICONS = {
 export default function App() {
   return (
     <SafeAreaProvider>
-      <XPProvider>
-        <Root />
-      </XPProvider>
+      <ThemeProvider>
+        <XPProvider>
+          <Root />
+        </XPProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }
@@ -52,7 +54,8 @@ function Root() {
 
   return (
     <NavigationContainer theme={navTheme}>
-      <StatusBar style="auto" />
+      {/* Follows the resolved theme, not the system, so an in-app override stays readable. */}
+      <StatusBar style={theme.dark ? 'light' : 'dark'} />
       <Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,
