@@ -53,7 +53,8 @@ restarts. Deleting Expo Go — or clearing its data — clears the log.
 
 - **Home** — four category cards (Applications, Coding, Behavioral, System Design),
   each showing accumulated XP and two buttons. Tapping one bumps the number with a
-  light haptic tap, a short sound and a small animation. At the bottom, a small
+  light haptic tap, a short sound and a small animation. A pixel hero idles in the
+  top-right corner, breathing and blinking while Home is open. At the bottom, a small
   settings card holds **Appearance** (System / Light / Dark) and **Sound** (on/off);
   both choices are remembered.
 - **History** — everything you logged, newest first, grouped by **Day / Week / Month /
@@ -90,6 +91,7 @@ src/
   xp.ts                      XP totals + day grouping, derived from the log
   achievements.ts            achievement definitions and unlock checks
   badges.ts                  one 11x11 pixel sprite per achievement
+  hero.ts                    the 12x14 hero and his idle frames
   storage.ts                 AsyncStorage read/write with validation
   store.tsx                  React context: load, add XP, track unlocks
   theme.ts                   light/dark palettes
