@@ -2,6 +2,7 @@ import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
 import { Animated, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useSound } from '../soundStore';
 import { useTheme } from '../themeStore';
 import type { Achievement } from '../types';
 
@@ -12,12 +13,14 @@ type Props = {
 
 export function AchievementUnlockedModal({ achievement, onDismiss }: Props) {
   const theme = useTheme();
+  const { playUnlock } = useSound();
   const [entrance] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     if (!achievement) return;
 
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    playUnlock();
     entrance.setValue(0);
     Animated.spring(entrance, {
       toValue: 1,
@@ -25,7 +28,7 @@ export function AchievementUnlockedModal({ achievement, onDismiss }: Props) {
       tension: 80,
       useNativeDriver: true,
     }).start();
-  }, [achievement, entrance]);
+  }, [achievement, entrance, playUnlock]);
 
   const scale = entrance.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1] });
 

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Animated, Easing, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { AppearanceControl } from '../components/AppearanceControl';
 import { CATEGORIES } from '../categories';
 import { CategoryCard } from '../components/CategoryCard';
+import { HomeSettings } from '../components/HomeSettings';
 import { Screen, SCREEN_PADDING } from '../components/Screen';
 import { useXPStore } from '../store';
 import { useTheme } from '../themeStore';
@@ -38,7 +38,7 @@ export function HomeScreen() {
           />
         ))}
 
-        <AppearanceControl />
+        <HomeSettings />
       </ScrollView>
     </Screen>
   );

@@ -53,8 +53,9 @@ restarts. Deleting Expo Go — or clearing its data — clears the log.
 
 - **Home** — four category cards (Applications, Coding, Behavioral, System Design),
   each showing accumulated XP and two buttons. Tapping one bumps the number with a
-  light haptic tap and a small animation. At the bottom, an **Appearance** control
-  switches between System / Light / Dark; the choice is remembered.
+  light haptic tap, a short sound and a small animation. At the bottom, a small
+  settings card holds **Appearance** (System / Light / Dark) and **Sound** (on/off);
+  both choices are remembered.
 - **History** — everything you logged, newest first, grouped into Today / Yesterday / date.
 - **Achievements** — only what has already unlocked. Locked ones are never shown,
   because they are not targets.
@@ -77,7 +78,7 @@ return worth celebrating.
 ## Layout
 
 ```
-App.tsx                      bottom tabs, theme wiring, unlock modal host
+App.tsx                      bottom tabs, providers, unlock modal host
 src/
   types.ts                   Category, XPEntry, XPStats, Achievement
   categories.ts              the four categories and their accents
@@ -85,9 +86,21 @@ src/
   achievements.ts            achievement definitions and unlock checks
   storage.ts                 AsyncStorage read/write with validation
   store.tsx                  React context: load, add XP, track unlocks
-  theme.ts                   light/dark palette
-  components/                Screen, CategoryCard, AchievementUnlockedModal
+  theme.ts                   light/dark palettes
+  themeStore.tsx             resolves System/Light/Dark into one theme
+  soundStore.tsx             preloaded players for the tap and unlock sounds
+  components/                Screen, CategoryCard, HomeSettings, unlock modal
   screens/                   Home, History, Achievements
+assets/sounds/               generated WAVs (see below)
+scripts/generate-sounds.mjs  synthesises those WAVs
+```
+
+The sound effects are synthesised, not sampled, so the repo carries no
+third-party audio. To retune them, edit the note table in
+`scripts/generate-sounds.mjs` and re-run it:
+
+```bash
+node scripts/generate-sounds.mjs
 ```
 
 Two things are stored: the XP entry log and the list of unlocked achievements.

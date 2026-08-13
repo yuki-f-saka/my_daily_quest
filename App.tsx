@@ -10,6 +10,7 @@ import { AchievementUnlockedModal } from './src/components/AchievementUnlockedMo
 import { AchievementsScreen } from './src/screens/AchievementsScreen';
 import { HistoryScreen } from './src/screens/HistoryScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
+import { SoundProvider } from './src/soundStore';
 import { useXPStore, XPProvider } from './src/store';
 import { ThemeProvider, useTheme } from './src/themeStore';
 
@@ -25,9 +26,11 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <XPProvider>
-          <Root />
-        </XPProvider>
+        <SoundProvider>
+          <XPProvider>
+            <Root />
+          </XPProvider>
+        </SoundProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );
