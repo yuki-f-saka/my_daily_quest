@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { CategoryMeta } from '../categories';
+import { useSound } from '../soundStore';
 import { useTheme } from '../themeStore';
 
 const XP_OPTIONS = [1, 2];
@@ -15,6 +16,7 @@ type Props = {
 
 export function CategoryCard({ category, totalXP, onAddXP }: Props) {
   const theme = useTheme();
+  const { playXP } = useSound();
   const accent = theme.dark ? category.accent.dark : category.accent.light;
 
   const [pop] = useState(() => new Animated.Value(0));
@@ -24,6 +26,7 @@ export function CategoryCard({ category, totalXP, onAddXP }: Props) {
     setLastDelta(xp);
     onAddXP(xp);
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    playXP(xp);
 
     pop.setValue(0);
     Animated.timing(pop, {
