@@ -3,6 +3,7 @@ import { Animated, Modal, Pressable, StyleSheet, Text, View } from 'react-native
 
 import { MONO_FONT } from '../theme';
 import { useTheme } from '../themeStore';
+import { Panel } from './Panel';
 import { PixelHero } from './PixelHero';
 
 /** Three verbs. That is the entire manual. */
@@ -29,29 +30,27 @@ export function GuideWindow({ visible, onClose }: Props) {
         accessibilityLabel="Close"
         onPress={onClose}
         style={[styles.backdrop, { backgroundColor: theme.overlay }]}>
-        <View style={[styles.frame, { backgroundColor: theme.card, borderColor: theme.text }]}>
-          <View style={[styles.inner, { borderColor: theme.text }]}>
-            <View style={styles.row}>
-              <PixelHero />
+        <Panel double style={styles.window} contentStyle={styles.content}>
+          <View style={styles.row}>
+            <PixelHero />
 
-              <View style={styles.lines}>
-                {LINES.map((line) => (
-                  <Text key={line} style={[styles.line, { color: theme.text }]}>
-                    {line}
-                  </Text>
-                ))}
-              </View>
+            <View style={styles.lines}>
+              {LINES.map((line) => (
+                <Text key={line} style={[styles.line, { color: theme.text }]}>
+                  {line}
+                </Text>
+              ))}
             </View>
-
-            <Text style={[styles.signature, { color: theme.muted }]}>
-              You never fail. You only gain XP.
-            </Text>
-
-            <Animated.Text style={[styles.cursor, { color: theme.text, opacity: cursor }]}>
-              ▼
-            </Animated.Text>
           </View>
-        </View>
+
+          <Text style={[styles.signature, { color: theme.muted }]}>
+            You never fail. You only gain XP.
+          </Text>
+
+          <Animated.Text style={[styles.cursor, { color: theme.text, opacity: cursor }]}>
+            ▼
+          </Animated.Text>
+        </Panel>
       </Pressable>
     </Modal>
   );
@@ -102,16 +101,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 28,
   },
-  frame: {
+  window: {
     width: '100%',
     maxWidth: 340,
-    borderWidth: 4,
-    // Square corners: this is a pixel window, not a card.
-    borderRadius: 0,
-    padding: 4,
   },
-  inner: {
-    borderWidth: 2,
+  content: {
     paddingHorizontal: 18,
     paddingTop: 18,
     paddingBottom: 14,

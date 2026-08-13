@@ -5,6 +5,7 @@ import { CATEGORIES } from '../categories';
 import { CategoryCard } from '../components/CategoryCard';
 import { GuideLink, GuideWindow } from '../components/GuideWindow';
 import { HomeSettings } from '../components/HomeSettings';
+import { Panel } from '../components/Panel';
 import { PixelHero } from '../components/PixelHero';
 import { Screen, SCREEN_PADDING } from '../components/Screen';
 import { loadGuideSeen, saveGuideSeen } from '../storage';
@@ -39,22 +40,24 @@ export function HomeScreen() {
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <View style={styles.headerText}>
-            <Text style={[styles.kicker, { color: theme.muted }]}>MY DAILY QUEST</Text>
-            <Animated.View style={[styles.totalRow, { transform: [{ scale: totalScale }] }]}>
-              <Text style={[styles.total, { color: theme.text }]}>
-                {stats.totalXP}
-                <Text style={[styles.totalUnit, { color: theme.muted }]}> XP</Text>
+        <Panel style={styles.status} contentStyle={styles.statusContent}>
+          <View style={styles.header}>
+            <View style={styles.headerText}>
+              <Text style={[styles.kicker, { color: theme.muted }]}>MY DAILY QUEST</Text>
+              <Animated.View style={[styles.totalRow, { transform: [{ scale: totalScale }] }]}>
+                <Text style={[styles.total, { color: theme.text }]}>
+                  {stats.totalXP}
+                  <Text style={[styles.totalUnit, { color: theme.muted }]}> XP</Text>
+                </Text>
+              </Animated.View>
+              <Text style={[styles.tagline, { color: theme.muted }]}>
+                You never fail. You only gain XP.
               </Text>
-            </Animated.View>
-            <Text style={[styles.tagline, { color: theme.muted }]}>
-              You never fail. You only gain XP.
-            </Text>
-          </View>
+            </View>
 
-          <PixelHero />
-        </View>
+            <PixelHero />
+          </View>
+        </Panel>
 
         {CATEGORIES.map((category) => (
           <CategoryCard
@@ -100,11 +103,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: SCREEN_PADDING,
     paddingBottom: 32,
   },
+  status: {
+    marginTop: 20,
+    marginBottom: 22,
+  },
+  statusContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 24,
-    paddingBottom: 28,
   },
   headerText: {
     flex: 1,

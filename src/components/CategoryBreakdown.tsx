@@ -50,8 +50,8 @@ export function CategoryBreakdown({ byCategory, showLegend = true }: Props) {
 const styles = StyleSheet.create({
   bar: {
     flexDirection: 'row',
-    height: 6,
-    borderRadius: 3,
+    height: 8,
+    borderRadius: 0,
     overflow: 'hidden',
     gap: 2,
   },

@@ -5,6 +5,7 @@ import { StyleSheet, Switch, Text, View } from 'react-native';
 import { useSound } from '../soundStore';
 import { useTheme } from '../themeStore';
 import { AppearanceControl } from './AppearanceControl';
+import { Panel } from './Panel';
 
 /** The two knobs this app has. Kept small, at the bottom of Home, below the cards. */
 export function HomeSettings() {
@@ -17,12 +18,7 @@ export function HomeSettings() {
   };
 
   return (
-    <View
-      style={[
-        styles.card,
-        { backgroundColor: theme.card, borderColor: theme.border },
-        theme.shadow,
-      ]}>
+    <Panel style={styles.panel} contentStyle={styles.content}>
       <View style={styles.row}>
         <Text style={[styles.label, { color: theme.muted }]}>APPEARANCE</Text>
         <AppearanceControl />
@@ -39,16 +35,16 @@ export function HomeSettings() {
           ios_backgroundColor={theme.fill}
         />
       </View>
-    </View>
+    </Panel>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
+  panel: {
     marginTop: 14,
-    borderRadius: 18,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 16,
+  },
+  content: {
+    paddingHorizontal: 14,
   },
   row: {
     flexDirection: 'row',
@@ -62,6 +58,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
   },
   divider: {
-    height: StyleSheet.hairlineWidth,
+    height: 1,
   },
 });

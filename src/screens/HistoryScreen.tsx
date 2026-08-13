@@ -4,6 +4,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { categoryAccent, categoryLabel } from '../categories';
 import { CategoryBreakdown } from '../components/CategoryBreakdown';
 import { CategoryFilter, type CategoryFilterValue } from '../components/CategoryFilter';
+import { Panel } from '../components/Panel';
 import { Screen, SCREEN_PADDING, ScreenHeader } from '../components/Screen';
 import { Segmented } from '../components/Segmented';
 import { SubPeriodBars } from '../components/SubPeriodBars';
@@ -65,37 +66,38 @@ export function HistoryScreen() {
           </Text>
         }
         renderItem={({ item }) => (
-          <View style={styles.bucket}>
-            <View style={styles.titleRow}>
-              <Text style={[styles.title, { color: theme.text }]}>{item.title}</Text>
-              <Text style={[styles.total, { color: theme.text }]}>
-                +{item.totalXP}
-                <Text style={[styles.totalUnit, { color: theme.muted }]}> XP</Text>
-              </Text>
+          <Panel style={styles.bucket}>
+            {/* Inverted title bar, like the header of a menu window. */}
+            <View style={[styles.titleBar, { backgroundColor: theme.frame }]}>
+              <Text style={[styles.title, { color: theme.card }]}>{item.title}</Text>
+              <Text style={[styles.total, { color: theme.card }]}>+{item.totalXP} XP</Text>
             </View>
 
-            <CategoryBreakdown byCategory={item.byCategory} />
+            <View style={styles.body}>
+              <CategoryBreakdown byCategory={item.byCategory} />
 
-            {mode === 'day' ? (
-              <View style={styles.entries}>
-                {item.entries.map((entry) => (
-                  <EntryRow key={entry.id} entry={entry} />
-                ))}
-              </View>
-            ) : (
-              <SubPeriodBars parts={item.parts} />
-            )}
-          </View>
+              {mode === 'day' ? (
+                <View style={styles.entries}>
+                  {item.entries.map((entry, index) => (
+                    <EntryRow key={entry.id} entry={entry} first={index === 0} />
+                  ))}
+                </View>
+              ) : (
+                <SubPeriodBars parts={item.parts} />
+              )}
+            </View>
+          </Panel>
         )}
       />
     </Screen>
   );
 }
 
-function EntryRow({ entry }: { entry: XPEntry }) {
+function EntryRow({ entry, first }: { entry: XPEntry; first: boolean }) {
   const theme = useTheme();
+
   return (
-    <View style={[styles.row, { backgroundColor: theme.card, borderColor: theme.border }]}>
+    <View style={[styles.row, !first && { borderTopWidth: 1, borderTopColor: theme.border }]}>
       <Text style={[styles.rowXP, { color: categoryAccent(entry.category, theme.dark) }]}>
         +{entry.xp}
       </Text>
@@ -121,49 +123,47 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   bucket: {
-    marginBottom: 26,
+    marginBottom: 16,
   },
-  titleRow: {
+  titleBar: {
     flexDirection: 'row',
-    alignItems: 'baseline',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
   },
   title: {
-    fontSize: 17,
+    fontSize: 14,
     fontWeight: '700',
-    letterSpacing: -0.2,
+    letterSpacing: 0.2,
   },
   total: {
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: '700',
   },
-  totalUnit: {
-    fontSize: 13,
-    fontWeight: '600',
+  body: {
+    paddingHorizontal: 12,
+    paddingTop: 12,
+    paddingBottom: 10,
   },
   entries: {
-    marginTop: 14,
+    marginTop: 6,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 52,
-    paddingHorizontal: 16,
-    borderRadius: 14,
-    borderWidth: StyleSheet.hairlineWidth,
-    marginBottom: 8,
+    height: 42,
   },
   rowXP: {
     width: 34,
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
   },
   rowLabel: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 15,
   },
   rowTime: {
-    fontSize: 13,
+    fontSize: 12.5,
   },
 });

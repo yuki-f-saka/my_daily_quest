@@ -65,8 +65,20 @@ restarts. Deleting Expo Go — or clearing its data — clears the log.
   days, a month into its weeks, a year into its months). Chips narrow it to one
   category. Periods and sub-periods with no XP are simply not drawn — the app never
   renders an absence.
-- **Achievements** — only what has already unlocked, each with its own pixel badge.
-  Locked ones are never shown, not even as silhouettes, because they are not targets.
+- **Achievements** — only what has already unlocked, each badge sitting in its own
+  slot. Locked ones are never shown, not even as silhouettes, because they are not
+  targets.
+
+## Look
+
+Everything is a window from a 2D RPG. One `Panel` component draws them all: square
+corners, a solid 2px frame, and a hard drop shadow along the right and bottom edges
+(borders, not a blur — nothing in here is soft). Dialogs use the thick double frame.
+`PixelButton` drops its face into that shadow while held. Selected menu entries
+invert, and each day in History gets an inverted title bar.
+
+The typefaces are unchanged: the system face for content, `Menlo` in the message
+window. The retro reads through the frames and the sprites, not through the letters.
 
 ## Achievements
 
@@ -99,8 +111,9 @@ src/
   theme.ts                   light/dark palettes
   themeStore.tsx             resolves System/Light/Dark into one theme
   soundStore.tsx             preloaded players for the tap and unlock sounds
-  components/                Screen, CategoryCard, HomeSettings, GuideWindow,
-                             PixelArt, PixelHero, unlock modal
+  components/                Panel, PixelButton, Screen, CategoryCard,
+                             HomeSettings, GuideWindow, PixelArt, PixelHero,
+                             unlock modal
   screens/                   Home, History, Achievements
 assets/sounds/               generated WAVs (see below)
 scripts/generate-sounds.mjs  synthesises those WAVs

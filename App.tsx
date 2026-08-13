@@ -65,7 +65,11 @@ function Root() {
           tabBarActiveTintColor: theme.text,
           tabBarInactiveTintColor: theme.muted,
           tabBarLabelStyle: styles.tabLabel,
-          tabBarStyle: { backgroundColor: theme.card, borderTopColor: theme.border },
+          tabBarStyle: {
+            backgroundColor: theme.card,
+            borderTopColor: theme.frame,
+            borderTopWidth: 2,
+          },
           tabBarIcon: ({ color, size, focused }) => {
             const icon = TAB_ICONS[route.name as keyof typeof TAB_ICONS];
             return <Ionicons name={focused ? icon : `${icon}-outline`} size={size} color={color} />;
