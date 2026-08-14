@@ -57,8 +57,12 @@ export function HomeSettings() {
         />
       </View>
 
-      {/* Nothing logged means nothing to reset, so the control is not there. */}
-      {stats.entryCount > 0 ? (
+      {/*
+        Development only, and only while there is something to clear. A release
+        build has no reset: in an app whose whole claim is that the pile only
+        grows, one mistaken tap should not be able to empty it.
+      */}
+      {__DEV__ && stats.entryCount > 0 ? (
         <>
           <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
