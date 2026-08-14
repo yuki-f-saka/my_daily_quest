@@ -55,8 +55,9 @@ restarts. Deleting Expo Go — or clearing its data — clears the log.
   each showing accumulated XP and two buttons. Tapping one bumps the number with a
   light haptic tap, a short sound and a small animation. A pixel hero idles in the
   top-right corner, breathing and blinking while Home is open. At the bottom, a small
-  settings card holds **Appearance** (System / Light / Dark) and **Sound** (on/off);
-  both choices are remembered. Below that, *[ how this works ]* opens a small RPG
+  settings card holds **Appearance** (System / Light / Dark), **Sound** (on/off) and,
+  once anything has been logged, **Reset** — which clears the XP log and the unlocked
+  list after a confirmation. Appearance and Sound are remembered. Below that, *[ how this works ]* opens a small RPG
   message window with the whole manual in it — three verbs. It also opens itself
   once, on the very first launch.
 - **History** — everything you logged, newest first, grouped by **Day / Week / Month /

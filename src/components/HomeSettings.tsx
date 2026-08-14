@@ -1,20 +1,41 @@
 import * as Haptics from 'expo-haptics';
 import React from 'react';
-import { StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, StyleSheet, Switch, Text, View } from 'react-native';
 
 import { useSound } from '../soundStore';
+import { useXPStore } from '../store';
 import { useTheme } from '../themeStore';
 import { AppearanceControl } from './AppearanceControl';
 import { Panel } from './Panel';
+import { PixelButton } from './PixelButton';
 
-/** The two knobs this app has. Kept small, at the bottom of Home, below the cards. */
+/** The knobs this app has. Kept small, at the bottom of Home, below the cards. */
 export function HomeSettings() {
   const theme = useTheme();
   const { enabled, setEnabled } = useSound();
+  const { stats, resetXP } = useXPStore();
 
   const toggleSound = (next: boolean) => {
     setEnabled(next);
     void Haptics.selectionAsync();
+  };
+
+  const confirmReset = () => {
+    Alert.alert(
+      'Start over?',
+      `This clears all ${stats.totalXP} XP and every unlocked achievement. It cannot be undone.`,
+      [
+        { text: 'Keep it', style: 'cancel' },
+        {
+          text: 'Reset',
+          style: 'destructive',
+          onPress: () => {
+            resetXP();
+            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          },
+        },
+      ],
+    );
   };
 
   return (
@@ -35,6 +56,24 @@ export function HomeSettings() {
           ios_backgroundColor={theme.fill}
         />
       </View>
+
+      {/* Nothing logged means nothing to reset, so the control is not there. */}
+      {stats.entryCount > 0 ? (
+        <>
+          <View style={[styles.divider, { backgroundColor: theme.border }]} />
+
+          <View style={styles.row}>
+            <Text style={[styles.label, { color: theme.muted }]}>XP LOG</Text>
+            <PixelButton
+              label="Reset"
+              tint={theme.danger}
+              style={styles.reset}
+              accessibilityLabel="Reset all XP"
+              onPress={confirmReset}
+            />
+          </View>
+        </>
+      ) : null}
     </Panel>
   );
 }
@@ -59,5 +98,8 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
+  },
+  reset: {
+    minWidth: 96,
   },
 });

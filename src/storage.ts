@@ -27,6 +27,15 @@ export async function saveUnlocked(unlocked: UnlockedAchievement[]): Promise<voi
   await write(UNLOCKED_KEY, unlocked);
 }
 
+/** Wipes the XP log and the unlocked list. Preferences are left alone. */
+export async function clearXPData(): Promise<void> {
+  try {
+    await AsyncStorage.multiRemove([ENTRIES_KEY, UNLOCKED_KEY]);
+  } catch (error) {
+    console.warn('[storage] could not clear XP data', error);
+  }
+}
+
 /** Returns null when nothing has been chosen yet, so the caller can keep its default. */
 export async function loadThemePreference(): Promise<ThemePreference | null> {
   try {

@@ -21,6 +21,8 @@ export type Theme = {
   /** Subtle fill for tappable surfaces sitting on a card. */
   fill: string;
   accent: string;
+  /** Only for the one destructive control in the app. */
+  danger: string;
   overlay: string;
   /** Border colour of every window and panel. */
   frame: string;
@@ -37,6 +39,7 @@ export const lightTheme: Theme = {
   border: '#E5E5EA',
   fill: '#EFEFF4',
   accent: '#3F6FE0',
+  danger: '#B23B3B',
   overlay: 'rgba(0,0,0,0.28)',
   frame: '#2B2D33',
   frameShadow: '#CFCFD6',
@@ -51,6 +54,7 @@ export const darkTheme: Theme = {
   border: '#25272D',
   fill: '#212329',
   accent: '#7FA0F0',
+  danger: '#E08A8A',
   overlay: 'rgba(0,0,0,0.6)',
   frame: '#E4E6EB',
   frameShadow: '#31343C',
