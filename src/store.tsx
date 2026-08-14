@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 
 import { earnedAchievementIds, findAchievement } from './achievements';
-import { loadEntries, loadUnlocked, saveEntries, saveUnlocked } from './storage';
+import { clearXPData, loadEntries, loadUnlocked, saveEntries, saveUnlocked } from './storage';
 import type {
   Achievement,
   AchievementId,
@@ -29,6 +29,8 @@ type XPStore = {
   /** Oldest first, in the order they unlocked. */
   unlocked: UnlockedAchievement[];
   addXP: (category: Category, xp: number) => void;
+  /** Back to zero: clears the log and the unlocked list. */
+  resetXP: () => void;
   /** The achievement waiting to be celebrated, if any. */
   pendingUnlock: Achievement | null;
   dismissPendingUnlock: () => void;
@@ -88,6 +90,13 @@ export function XPProvider({ children }: { children: React.ReactNode }) {
     [entries, unlocked],
   );
 
+  const resetXP = useCallback(() => {
+    setEntries([]);
+    setUnlocked([]);
+    setUnlockQueue([]);
+    void clearXPData();
+  }, []);
+
   const dismissPendingUnlock = useCallback(() => {
     setUnlockQueue((prev) => prev.slice(1));
   }, []);
@@ -95,8 +104,17 @@ export function XPProvider({ children }: { children: React.ReactNode }) {
   const pendingUnlock = unlockQueue.length > 0 ? findAchievement(unlockQueue[0]) ?? null : null;
 
   const value = useMemo<XPStore>(
-    () => ({ ready, entries, stats, unlocked, addXP, pendingUnlock, dismissPendingUnlock }),
-    [ready, entries, stats, unlocked, addXP, pendingUnlock, dismissPendingUnlock],
+    () => ({
+      ready,
+      entries,
+      stats,
+      unlocked,
+      addXP,
+      resetXP,
+      pendingUnlock,
+      dismissPendingUnlock,
+    }),
+    [ready, entries, stats, unlocked, addXP, resetXP, pendingUnlock, dismissPendingUnlock],
   );
 
   return <XPContext.Provider value={value}>{children}</XPContext.Provider>;
